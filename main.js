@@ -84,10 +84,10 @@ BufferManager.create({
 
     8, 9, 10,
     8, 10, 11,
-
+    //
     13, 12, 14,
     15, 14, 12,
-
+    //
     16, 17, 18,
     16, 18, 19,
 
@@ -96,37 +96,55 @@ BufferManager.create({
   ])
 });
 
+let lastTime;
+let t = Transformable
+  .single()
+  .scale(0.5, 0.5, 0.5);
 
-Drawer.draw({
-  shaderName: 'default',
-  bufferName: 'default-cube',
-  uniformData: {
-    'mWorld': {
-      setter: 'uniformMatrix4fv',
-      data: new Float32Array([
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-      ])
-    },
-    'mView': {
-      setter: 'uniformMatrix4fv',
-      data: new Float32Array([
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-      ])
-    },
-    'mProj': {
-      setter: 'uniformMatrix4fv',
-      data: new Float32Array([
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-      ])
+let scaleFactor = 0;
+
+function loop(time) {
+
+  lastTime = lastTime ? lastTime : time;
+  delta = time - lastTime;
+  lastTime = time;
+
+  requestAnimationFrame(loop);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  scaleFactor = Math.abs(Math.sin(time / 1000) * 0.3) + 0.2;
+  t.setScale(scaleFactor, scaleFactor, scaleFactor);
+  t.rotate(Math.PI * delta / 5000, Math.PI * delta / 10000, Math.PI * delta / 2500);
+
+
+  Drawer.draw({
+    shaderName: 'default',
+    bufferName: 'default-cube',
+    uniformData: {
+      'mWorld': {
+        setter: 'uniformMatrix4fv',
+        data: t.getMatrix()
+      },
+      'mView': {
+        setter: 'uniformMatrix4fv',
+        data: new Float32Array([
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1
+        ])
+      },
+      'mProj': {
+        setter: 'uniformMatrix4fv',
+        data: new Float32Array([
+          1, 0, 0, 0,
+          0, 1, 0, 0,
+          0, 0, 1, 0,
+          0, 0, 0, 1
+        ])
+      }
     }
-  }
-})
+  });
+}
+
+loop(0);

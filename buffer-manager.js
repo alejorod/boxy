@@ -1,5 +1,6 @@
 let BufferManager = (function(gl) {
   let buffers = {};
+  let currentBuffer = null;
 
   function create({name, description, data, indices}) {
     if (buffers[name]) return;
@@ -34,10 +35,20 @@ let BufferManager = (function(gl) {
     return buffers[name].indexBuffer
   }
 
+  function bindBuffer(bufferName) {
+    if (currentBuffer === bufferName) return false;
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, getBuffer(bufferName));
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, getIndexBuffer(bufferName));
+
+    return true;
+  }
+
   return {
     create,
     getDescription,
     getBuffer,
-    getIndexBuffer
+    getIndexBuffer,
+    bindBuffer
   };
 })(window.gl);

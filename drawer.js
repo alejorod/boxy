@@ -6,10 +6,24 @@ let Drawer = (function(gl) {
     let attributes = ShaderManager.getAttributes(shaderName);
     let uniforms = ShaderManager.getUniforms(shaderName);
 
-    ShaderManager.use(shaderName);
+    let newProgram = ShaderManager.use(shaderName);
+    let newBuffer = BufferManager.bindBuffer(bufferName);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    if (newProgram || newBuffer) {
+      Object.keys(attributes).forEach(function(attributeKey) {
+        let config = description[attributeKey];
+        let location = attributes[attributeKey];
+        gl.enableVertexAttribArray(location);
+        gl.vertexAttribPointer(
+          location,
+          config.count,
+          config.type,
+          gl.FALSE,
+          description.stride,
+          config.offset
+        );
+      });
+    }
 
     Object.keys(uniforms).forEach(function(uniformKey) {
       let config = uniformData[uniformKey];
@@ -17,21 +31,7 @@ let Drawer = (function(gl) {
       gl[config.setter](location, gl.FALSE, config.data);
     });
 
-    Object.keys(attributes).forEach(function(attributeKey) {
-      let config = description[attributeKey];
-      let location = attributes[attributeKey];
-      gl.enableVertexAttribArray(location);
-      gl.vertexAttribPointer(
-        location,
-        config.count,
-        config.type,
-        gl.FALSE,
-        description.stride,
-        config.offset
-      );
-    });
-
-    gl.drawElements(gl.TRANGLES, description.indexLength, gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(gl.TRIANGLES, description.indexLength, gl.UNSIGNED_SHORT, 0);
   }
 
   return {

@@ -1,5 +1,6 @@
 let ShaderManager = (function(gl) {
   let shaders = {};
+  let currentProgram = null;
 
   function create({name, sources, attributes, uniforms}) {
     if (shaders[name]) return;
@@ -55,7 +56,9 @@ let ShaderManager = (function(gl) {
   };
 
   function use(name) {
+    if (currentProgram === name) return false;
     gl.useProgram(shaders[name].program);
+    return true;
   }
 
   function getAttributes(shaderName, attributeName) {
