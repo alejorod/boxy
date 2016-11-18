@@ -84,10 +84,10 @@ BufferManager.create({
 
     8, 9, 10,
     8, 10, 11,
-    //
+
     13, 12, 14,
     15, 14, 12,
-    //
+
     16, 17, 18,
     16, 18, 19,
 
@@ -97,11 +97,25 @@ BufferManager.create({
 });
 
 let lastTime;
-let t = Transformable
-  .single()
-  .scale(0.5, 0.5, 0.5);
 
-let scaleFactor = 0;
+let ts = [];
+let t = null;
+
+for (var i = 0; i < 100; i++) {
+  t = new TransformableObject();
+  t.translate(3 * i, 0, 0);
+
+  if (i) {
+    t.parent = ts[0];
+  } else {
+    t.scale(0.2, 0.2, 0.2);
+  }
+  ts.push(t);
+}
+
+let camera = Camera.create();
+
+camera.scale(2, 2, 2);
 
 function loop(time) {
 
@@ -112,38 +126,33 @@ function loop(time) {
   requestAnimationFrame(loop);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  scaleFactor = Math.abs(Math.sin(time / 1000) * 0.3) + 0.2;
-  t.setScale(scaleFactor, scaleFactor, scaleFactor);
-  t.rotate(Math.PI * delta / 5000, Math.PI * delta / 10000, Math.PI * delta / 2500);
+  camera.update(delta);
 
-
-  Drawer.draw({
-    shaderName: 'default',
-    bufferName: 'default-cube',
-    uniformData: {
-      'mWorld': {
-        setter: 'uniformMatrix4fv',
-        data: t.getMatrix()
-      },
-      'mView': {
-        setter: 'uniformMatrix4fv',
-        data: new Float32Array([
-          1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1, 0,
-          0, 0, 0, 1
-        ])
-      },
-      'mProj': {
-        setter: 'uniformMatrix4fv',
-        data: new Float32Array([
-          1, 0, 0, 0,
-          0, 1, 0, 0,
-          0, 0, 1, 0,
-          0, 0, 0, 1
-        ])
+  ts.forEach((o, i) => {
+    Drawer.draw({
+      shaderName: 'default',
+      bufferName: 'default-cube',
+      uniformData: {
+        'mWorld': {
+          setter: 'uniformMatrix4fv',
+          data: o.matrix
+        },
+        'mView': {
+          setter: 'uniformMatrix4fv',
+          data: camera.matrix
+        },
+        'mProj': {
+          setter: 'uniformMatrix4fv',
+          data: mat4.perspective(
+            new Float32Array(16),
+            Math.PI / 2,
+            canvas.width / canvas.height,
+            0.0001,
+            10000
+          )
+        }
       }
-    }
+    });
   });
 }
 
