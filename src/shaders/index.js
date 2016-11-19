@@ -1,0 +1,1 @@
+export shader from './default';

@@ -119,7 +119,7 @@ function combine(t1, t2) {
   return c;
 }
 
-const T = {
+export default {
   create,
   combine
 }

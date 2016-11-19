@@ -1,6 +1,6 @@
-// import T from './transformations';
+import T from './transformation';
 
-class TransformableObject {
+export default class TransformableObject {
   constructor() {
     this.transformation = T.create();
     this._parent = null;
