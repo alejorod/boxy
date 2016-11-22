@@ -19,6 +19,17 @@ class Camera extends TransformableObject {
     };
   }
 
+  get normalMatrix() {
+    let i = mat4.identity(new Float32Array(16));
+    mat4.translate(
+      i,
+      this.rotationMatrix,
+      [this.transformation.translation.x, this.transformation.translation.y, this.transformation.translation.z]
+    );
+    mat4.invert(i, i);
+    return i;
+  }
+
   update(delta) {
     let perpDirection = this.perpDirection;
 
