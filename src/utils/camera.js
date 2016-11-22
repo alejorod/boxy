@@ -10,59 +10,51 @@ class Camera extends TransformableObject {
   }
 
   get direction() {
+    let dir = new Float32Array(3);
+    vec3.transformMat4(dir, [0, 0, 1], this.rotationMatrix);
     return {
-      x: Math.sin(this.transformation.rotation.y) * Math.cos(this.transformation.rotation.z),
-      y: -Math.sin(this.transformation.rotation.z),
-      z: Math.cos(this.transformation.rotation.y) * Math.cos(this.transformation.rotation.z)
-    };
-  }
-
-  get perpDirection() {
-    return {
-      x: Math.sin(this.transformation.rotation.y + Math.PI / 2) * Math.cos(this.transformation.rotation.z),
-      y: -Math.sin(this.transformation.rotation.z),
-      z: Math.cos(this.transformation.rotation.y + Math.PI / 2) * Math.cos(this.transformation.rotation.z)
+      x: dir[0],
+      y: dir[1],
+      z: dir[2]
     };
   }
 
   update(delta) {
-    let direction = this.direction;
     let perpDirection = this.perpDirection;
 
-    let moveVector = {
-      x: delta / 150 * direction.x,
-      y: delta / 150 * direction.y,
-      z: delta / 150 * direction.z
-    }
+    let rotationVector = {
+      x: 0,
+      y: 0,
+      z: 0
+    };
 
-    let perpMoveVector = {
-      x: delta / 150 * perpDirection.x,
-      y: delta / 150 * perpDirection.y,
-      z: delta / 150 * perpDirection.z
-    }
+    rotationVector.y += keyboard.isPressed('left') ? Math.PI : 0;
+    rotationVector.y += keyboard.isPressed('right') ? -Math.PI : 0;
+    rotationVector.x += keyboard.isPressed('up') ? Math.PI : 0;
+    rotationVector.x += keyboard.isPressed('down') ? -Math.PI : 0;
 
-    if (keyboard.isPressed('left')) {
-      this.rotate(0, Math.PI * delta / 1000, 0)
-    }
+    let movingVector = {
+      x: 0,
+      y: 0,
+      z: 0
+    };
 
-    if (keyboard.isPressed('right')) {
-      this.rotate(0, -Math.PI * delta / 1000, 0)
-    }
+    movingVector.z += keyboard.isPressed('w') ? -1 : 0;
+    movingVector.z += keyboard.isPressed('s') ? 1 : 0;
+    movingVector.x += keyboard.isPressed('a') ? -1 : 0;
+    movingVector.x += keyboard.isPressed('d') ? 1 : 0;
 
-    if (keyboard.isPressed('up')) {
-      this.translate(-moveVector.x, -moveVector.y, -moveVector.z);
-    }
+    this.rotate(rotationVector.x * delta / 1000, rotationVector.y * delta / 1000, rotationVector.z * delta / 1000);
 
-    if (keyboard.isPressed('down')) {
-      this.translate(moveVector.x, moveVector.y, moveVector.z);
-    }
+    let direction = new Float32Array(3);
 
-    if (keyboard.isPressed('a')) {
-      this.translate(-perpMoveVector.x, -perpMoveVector.y, -perpMoveVector.z);
-    }
-    if (keyboard.isPressed('d')) {
-      this.translate(perpMoveVector.x, perpMoveVector.y, perpMoveVector.z);
-    }
+    vec3.transformMat4(
+      direction,
+      [movingVector.x, movingVector.y, movingVector.z],
+      this.rotationMatrix
+    )
+
+    this.translate(direction[0] * delta / 10, direction[1] * delta / 10, direction[2] * delta / 10);
   }
 }
 

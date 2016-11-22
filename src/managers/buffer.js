@@ -17,10 +17,13 @@ function create({name, description, data, indices}) {
 
   description.indexLength = indices.length;
 
+  let d = Object.assign({}, description);
+  d.indexLength = indices.length;
+
   buffers[name] = {
     buffer: dataBuffer,
     indexBuffer: indexBuffer,
-    description: description
+    description: d
   }
 }
 

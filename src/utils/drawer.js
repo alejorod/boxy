@@ -63,6 +63,10 @@ class Drawer {
     let newProgram = ShaderManager.use(renderable.shader);
     let newBuffer = BufferManager.bindBuffer(renderable.buffer);
 
+    gl.uniformMatrix4fv(uniforms['mProj'], gl.FALSE, this.projection);
+    gl.uniformMatrix4fv(uniforms['mView'], gl.FALSE, this.camera.matrix);
+    gl.uniformMatrix4fv(uniforms['mWorld'], gl.FLASE, renderable.matrix);
+
     if (newProgram || newBuffer) {
       Object.keys(attributes).forEach(function(attributeKey) {
         let config = description[attributeKey];
@@ -79,9 +83,7 @@ class Drawer {
       });
     }
 
-    gl.uniformMatrix4fv(uniforms['mProj'], gl.FALSE, projection);
-    gl.uniformMatrix4fv(uniforms['mView'], gl.FALSE, camera.matrix);
-    gl.uniformMatrix4fv(uniforms['mWorld'], gl.FLASE, renderable.matrix);
+
 
     gl.drawElements(gl.TRIANGLES, description.indexLength, gl.UNSIGNED_SHORT, 0);
   }

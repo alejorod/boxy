@@ -68,22 +68,22 @@ class Transformation {
 
   get rotationMatrix() {
     mat4.identity(this._rotationMatrix);
-    mat4.rotateX(
+    mat4.rotateZ(
       this._rotationMatrix,
       this._rotationMatrix,
-      this.rotation.x
+      this.rotation.z
     );
-
+    
     mat4.rotateY(
       this._rotationMatrix,
       this._rotationMatrix,
       this.rotation.y
     );
 
-    mat4.rotateZ(
+    mat4.rotateX(
       this._rotationMatrix,
       this._rotationMatrix,
-      this.rotation.z
+      this.rotation.x
     );
 
     return this._rotationMatrix;

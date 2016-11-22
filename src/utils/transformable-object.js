@@ -39,4 +39,10 @@ export default class TransformableObject {
       ? T.combine(this.parent.transformation, this.transformation)
       : this.transformation.matrix;
   }
+
+  get rotationMatrix() {
+    return this._parent
+      ? T.combine(this.parent.rotationMatrix, this.rotationMatrix)
+      : this.transformation.rotationMatrix;
+  }
 }

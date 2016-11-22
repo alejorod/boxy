@@ -4,7 +4,9 @@ const keys = {
   'up': false,
   'down': false,
   'a': false,
-  'd': false
+  'd': false,
+  'w': false,
+  's': false
 };
 
 const keyCodes = {
@@ -13,7 +15,9 @@ const keyCodes = {
   38: 'up',
   40: 'down',
   65: 'a',
-  68: 'd'
+  68: 'd',
+  83: 's',
+  87: 'w'
 };
 
 window.onkeydown = function(e) {

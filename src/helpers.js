@@ -1,6 +1,4 @@
-// import * as buffers from './buffers';
 import cube from './buffers/cube';
-// import * as shaders from './shaders';
 import shader from './shaders/default';
 import { gl } from './webgl';
 import BufferManager from './managers/buffer';
@@ -20,7 +18,7 @@ export function loop(cb) {
 }
 
 export function initWebgl() {
-  gl.clearColor(1.0, 1.0, 1.0, 1.0);
+  gl.clearColor(0.2, 0.4, 0.95, 1.0);
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.CULL_FACE);
   gl.frontFace(gl.CCW);
